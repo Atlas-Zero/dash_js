@@ -1,4 +1,5 @@
-Menü(Navigation)
-Objekte(safe) bzw. Maps.
-Objekte(unsafe, z.B. Dreiecke)
-Geschwindigkeitsänderungen
+## TODO'S 
+- Menü(Navigation)
+- Objekte(safe) bzw. Maps.
+- Objekte(unsafe, z.B. Dreiecke)
+- Geschwindigkeitsänderungen
