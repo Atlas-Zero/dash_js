@@ -1,22 +1,47 @@
 const canvas = document.getElementById("mainCanvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d"); 
 
 const cube = {
     x: 250,
-    y: 500,
+    y: 100,
     w: 30,
-    h: 30
+    h: 30,
+    dy: 5,
+    gravity: 0.5,
+    jumpStrength: -10,
+    onGround: false
+}
+
+function start() {
+    canvas.focus();
+    window.addEventListener("keypress", jump, false);
+    setInterval(cyclic, 15)
 }
 
 function gameLogic() {
-    canvas.focus()
-    canvas.addEventListener("keydown", jump, false)
+    // gravity
+    cube.dy += cube.gravity;
+    cube.y += cube.dy;
+
+    // limit: 
+    if (cube.y >= 700) {
+        cube.y = 700;
+        cube.dy = 0;
+        cube.onGround = true;
+    } else {
+        cube.onGround = false;
+    }
 }
 
-function jump(self) {
-    if (self.code === " ") {
-        console.log("pressed space")
-    };
+function jump(e) {
+    if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) { 
+        cube.dy = cube.jumpStrength;
+    }
+}
+
+function drawEnv() {
+    // refresh canvas
+    canvas.width = canvas.width;
 }
 
 function drawCube() {
@@ -25,7 +50,8 @@ function drawCube() {
 }
 
 function cyclic() {
+    drawEnv();
     drawCube();
     gameLogic();
 }
-setInterval(cyclic, 15)
+
