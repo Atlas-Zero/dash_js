@@ -15,7 +15,7 @@ const cube = {
 function start() {
     canvas.focus();
     window.addEventListener("keypress", jumpPc, false);
-    window.addEventListener("touchstart", jumpMobile, false),
+    canvas.addEventListener("touchstart", jumpMobile, false),
     setInterval(cyclic, 15)
 }
 
