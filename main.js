@@ -15,6 +15,7 @@ const cube = {
 function start() {
     canvas.focus();
     window.addEventListener("keypress", jump, false);
+    window.addEventListener("touchstart", jump, false),
     setInterval(cyclic, 15)
 }
 
@@ -34,7 +35,10 @@ function gameLogic() {
 }
 
 function jump(e) {
-    if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) { 
+    if ((e.keyCode === 32 ||
+        e.code === "Space" ||
+        ontouchstart()
+    ) && cube.onGround) { 
         cube.dy = cube.jumpStrength;
     }
 }
