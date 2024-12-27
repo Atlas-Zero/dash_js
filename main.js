@@ -15,7 +15,7 @@ const cube = {
 function start() {
     canvas.focus();
     window.addEventListener("keypress", jumpPc, false);
-    canvas.addEventListener("touchstart", jumpMobile, false),
+    canvas.addEventListener("touchstart", jumpMobile, false);
     setInterval(cyclic, 15)
 }
 
@@ -43,6 +43,7 @@ function jumpPc(e) {
 
 function jumpMobile(e) {
     // mobile
+    e.preventDefault();
     if (cube.onGround) {
         cube.dy = cube.jumpStrength;
     }
