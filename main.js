@@ -14,8 +14,8 @@ const cube = {
 
 function start() {
     canvas.focus();
-    window.addEventListener("keypress", jump, false);
-    window.addEventListener("touchstart", jump, false),
+    window.addEventListener("keypress", jumpPc, false);
+    window.addEventListener("touchstart", jumpMobile, false),
     setInterval(cyclic, 15)
 }
 
@@ -34,11 +34,16 @@ function gameLogic() {
     }
 }
 
-function jump(e) {
-    if ((e.keyCode === 32 ||
-        e.code === "Space" ||
-        ontouchstart()
-    ) && cube.onGround) { 
+function jumpPc(e) {
+    // pc
+    if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) { 
+        cube.dy = cube.jumpStrength;
+    }
+}
+
+function jumpMobile(e) {
+    // mobile
+    if (cube.onGround) {
         cube.dy = cube.jumpStrength;
     }
 }
