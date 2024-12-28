@@ -1,4 +1,6 @@
 const canvas = document.getElementById("mainCanvas");
+canvas.width = window.innerWidth * 0.8;
+canvas.height = window.innerHeight * 0.8;
 const ctx = canvas.getContext("2d");
 
 const cube = {
@@ -47,14 +49,14 @@ function start() {
     setInterval(cyclic, 15)
 }
 
-function gameLogic() {
+function cubeMovement() {
     // gravity
     cube.dy += cube.gravity;
     cube.y += cube.dy;
 
     // limit: 
-    if (cube.y >= 700) {
-        cube.y = 700;
+    if (cube.y >= canvas.height - 100) {
+        cube.y = canvas.height - 100;
         cube.dy = 0;
         cube.onGround = true;
     } else {
@@ -97,7 +99,7 @@ function jumpMobile(e) {
 
 function drawEnv() {
     // refresh canvas
-    canvas.width = canvas.width;
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
 function drawCube() {
@@ -149,5 +151,5 @@ function cyclic() {
     drawEnv();
     drawCube();
     drawSpike();
-    gameLogic();
+    cubeMovement();
 }
