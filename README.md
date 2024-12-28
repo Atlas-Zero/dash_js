@@ -6,3 +6,4 @@
 - Objekt bewegung/drehung ?
 - Musik
 - Objekte löschen nachdem sie vom Bild sind (noch keine Lösung gefunden)
+- Cheats (für ein ++ 🙃)
