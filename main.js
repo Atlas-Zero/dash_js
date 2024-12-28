@@ -44,12 +44,12 @@ var speed = {
 function start() {
     canvas.focus();
     window.addEventListener("keypress", jumpPc, false);
-    canvas.addEventListener("touchstart", jumpMobile, false);
+    window.addEventListener("touchstart", jumpMobile, false);
     window.addEventListener("keydown", drawHitbox, false);
     setInterval(cyclic, 15)
 }
 
-function cubeMovement() {
+function gameLogic() {
     // gravity
     cube.dy += cube.gravity;
     cube.y += cube.dy;
@@ -151,5 +151,5 @@ function cyclic() {
     drawEnv();
     drawCube();
     drawSpike();
-    cubeMovement();
+    gameLogic();
 }
