@@ -9,4 +9,4 @@
 - Cheats (für ein ++ 🙃)
 
 ## DONE
-- Hitbox checker
+- Hitbox checker | mit "h" oder "H" hitbox sehen(toggle)

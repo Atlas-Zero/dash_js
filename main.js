@@ -13,24 +13,24 @@ const cube = {
 }
 
 const spike = {
-    point1x: 1000, //Startpunkt
-    point1y: 730,
-    point2x: 1015, //Spitze
-    point2y: 700,
-    point3x: 1030, //Endpunkt
-    point3y: 730
+    point1x: canvas.width - 200, //Startpunkt
+    point1y: canvas.height - 70,
+    point2x: canvas.width - 185, //Spitze
+    point2y: canvas.height - 100,
+    point3x: canvas.width - 170, //Endpunkt
+    point3y: canvas.height - 70
 }
 
 const spike_Hitbox = {
-    x: 1010,
-    y: 705,
+    x: canvas.width - 185,
+    y: canvas.height - 95,
     w: 10,
     h: 20
 }
 
 const spike_Hitbox2 = {
-    x: 1005,
-    y: 715,
+    x: canvas.width - 190,
+    y: canvas.height - 85,
     w: 20,
     h: 15
 }
@@ -43,6 +43,7 @@ function start() {
     canvas.focus();
     window.addEventListener("keypress", jumpPc, false);
     canvas.addEventListener("touchstart", jumpMobile, false);
+    window.addEventListener("keydown", drawHitbox, false);
     setInterval(cyclic, 15)
 }
 
@@ -72,6 +73,10 @@ function gameLogic() {
         cube.y = 250;
         window.alert("Game Over");
         location.reload();
+    }
+    if (toggle_Hitbox === true){
+        drawSpike_Hitbox();
+        drawSpike_Hitbox2();
     }
 }
 
@@ -112,15 +117,24 @@ function drawSpike() {
     ctx.stroke();
 }
 
-// function drawSpike_Hitbox() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
-//     ctx.fillStyle = "red";
-//     ctx.fillRect(spike_Hitbox.x, spike_Hitbox.y, spike_Hitbox.w, spike_Hitbox.h);
-// }
+function drawSpike_Hitbox() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
+    ctx.fillStyle = "red";
+    ctx.fillRect(spike_Hitbox.x, spike_Hitbox.y, spike_Hitbox.w, spike_Hitbox.h);
+}
 
-// function drawSpike_Hitbox2() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
-//     ctx.fillStyle = "red";
-//     ctx.fillRect(spike_Hitbox2.x, spike_Hitbox2.y, spike_Hitbox2.w, spike_Hitbox2.h);
-// }
+function drawSpike_Hitbox2() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
+    ctx.fillStyle = "red";
+    ctx.fillRect(spike_Hitbox2.x, spike_Hitbox2.y, spike_Hitbox2.w, spike_Hitbox2.h);
+}
+
+var toggle_Hitbox = false;
+
+function drawHitbox(e){
+    if (e.key === "h" || e.key === "H") {
+        toggle_Hitbox = !toggle_Hitbox;
+        console.log(`Toggle Hitbox: ${toggle_Hitbox}`);
+    }
+}
 
 function checkHitbox(cubeX, cubeY, hitbox) {
     return (
@@ -135,7 +149,5 @@ function cyclic() {
     drawEnv();
     drawCube();
     drawSpike();
-    // drawSpike_Hitbox(); 
-    // drawSpike_Hitbox2();
     gameLogic();
 }
