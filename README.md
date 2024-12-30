@@ -5,8 +5,9 @@
 - Geschwindigkeitsänderungen
 - Objekt bewegung/drehung ?
 - Musik
-- Objekte löschen nachdem sie vom Bild sind (noch keine Lösung gefunden)
+- Objekte löschen nachdem sie vom Bild sind (if statement? solange in canvas)
 - Cheats (für ein ++ 🙃)
+
 
 ## DONE
 - Hitbox checker | mit "h" oder "H" hitbox sehen(toggle)

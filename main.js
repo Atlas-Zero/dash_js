@@ -51,7 +51,7 @@ const box = {
 
 const boxes = [
     { x: obj_spawnpoint.x + 200, y: obj_spawnpoint.y, w: cube.w, h: cube.h },
-    { x: obj_spawnpoint.x + 500, y: obj_spawnpoint.y - 30, w: cube.w, h: cube.h }
+    { x: obj_spawnpoint.x + 500, y: obj_spawnpoint.y - 30, w: cube.w + 300, h: cube.h }
 ]
 
 var toggle_Hitbox = false;
@@ -99,9 +99,11 @@ function gameLogic() {
 
     //box jump
     box_jump();
-
     //before box
     cube_front_box();
+
+    //under box
+    cube_under_box();
 
     //unsafe object
     if (checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox, "top") || checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox2, "top")) {
@@ -114,9 +116,10 @@ function gameLogic() {
     //out of frame
     if (cube.x + cube.w < -10){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        cube.y = 250;
+        cube.y = canvas.width - 70;
+        cube.x = 100;
         window.alert("Game Over");
-        location.reload
+        location.reload();
     }
 
     if (toggle_Hitbox === true) {
@@ -146,7 +149,8 @@ function box_jump() {
     boxes.forEach(function (b) {
         if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "top")) {
             cube.onGround = true;
-            cube.y > cube.y - cube.h;
+            cube.y = b.y - cube.h;
+            cube.dy = 0;
             console.log(`checkHitboxTop`)
         }
     })
@@ -156,8 +160,17 @@ function cube_front_box() {
     boxes.forEach(function (b){
         if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "left")){
             cube.x -= speed.speedx;
-            cube.y > cube.h;
+            cube.x = b.x - cube.w;
             console.log(`checkHitboxLeft`)
+        }
+    })
+}
+
+function cube_under_box(){
+    boxes.forEach(function (b){
+        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "bottom")){
+            cube.y = b.y + b.h;
+            console.log(`checkHitboxBottom`)
         }
     })
 }
@@ -166,7 +179,7 @@ function checkHitbox(cubeX, cubeY, cubeW, cubeH, hitbox, side) {
     switch (side) {
         case "top":
             return (
-                cubeX + cubeW > hitbox.x &&  // checkt anfang der hitbox (cube: rechts über hitbox: links)
+                cubeX + cubeW > hitbox.x + 10 &&  // checkt anfang der hitbox (cube: rechts über hitbox: links) // + 10 damit top hitbox nicht bei seiten gecheckt wird
                 cubeX < hitbox.x + hitbox.w &&  // checkt ende der hitbox (cube: links über hitbox: rechts)
                 cubeY + cubeH > hitbox.y &&  // cube berührt hitbox (cube: unten auf hitbox: oben)
                 cubeY + cubeH <= hitbox.y + hitbox.h // cube ist auf der richtigen höhe der hitbox (nicht vergessen: weniger y = höher)
