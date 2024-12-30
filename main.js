@@ -99,7 +99,7 @@ function gameLogic() {
         b.x -= speed.speedx;
     })
 
-    if (checkHitbox(cube.x, cube.y, spike_Hitbox) || checkHitbox(cube.x, cube.y, spike_Hitbox2)) {
+    if (checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox, "top") || checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox2, "top")) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         cube.y = 250;
         window.alert("Game Over");
@@ -130,11 +130,11 @@ function jumpMobile(e) {
 
 function box_jump() {
     boxes.forEach(function (b) {
-        if (checkHitbox(cube.x, cube.y, b)) {
+        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "top")) {
             cube.onGround = true;
             cube.y = b.y - b.h;
             cube.dy = 0;
-            console.log(`checkHitbox`)
+            console.log(`checkHitboxTop`)
         }
     })
 }
@@ -144,12 +144,19 @@ function drawEnv() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 }
 
+function drawGround() {
+    ctx.strokeStyle = "grey"
+    ctx.beginPath();
+    ctx.moveTo(0, obj_spawnpoint.y + cube.h);
+    ctx.lineTo(canvas.width, obj_spawnpoint.y + cube.h);
+    ctx.closePath();
+    ctx.stroke();
+}
+
 function drawCube() {
     ctx.lineWidth = 1;
     ctx.fillStyle = "ghostwhite";
-    ctx.strokeStyle = "red"; // dreieck 2,5D!?
     ctx.fillRect(cube.x, cube.y, cube.w, cube.h);
-    ctx.stroke();
 }
 
 function drawSpike() {
@@ -193,21 +200,48 @@ function drawHitbox(e) {
     }
 }
 
-function checkHitbox(cubeX, cubeY, hitbox) {
-    return (
-        cubeX + cube.w > hitbox.x &&  // cube: rechts --> hitbox: links
-        cubeX < hitbox.x + hitbox.w &&  // cube: links --> hitbox rechts (wird eigentlich nicht gebraucht)
-        cubeY + cube.h > hitbox.y &&  // cube: unten --> hitbox: oben
-        cubeY < hitbox.y + hitbox.h // cube: oben --> hitbox unten (wird eigentlich nicht gebraucht)
-    );
+function checkHitbox(cubeX, cubeY, cubeW, cubeH, hitbox, side) {
+    switch (side)  {
+        case "top":
+            return (
+                cubeX + cubeW > hitbox.x &&  // checkt anfang der hitbox (cube: rechts über hitbox: links)
+                cubeX < hitbox.x + hitbox.w &&  // checkt ende der hitbox (cube: links über hitbox: rechts)
+                cubeY + cubeH > hitbox.y &&  // cube berührt hitbox (cube: unten auf hitbox: oben)
+                cubeY + cubeH <= hitbox.y + hitbox.h // cube ist auf der richtigen höhe der hitbox (nicht vergessen: weniger y = höher)
+            );
+        case "bottom":
+            return (
+                cubeX + cubeW > hitbox.x &&  
+                cubeX < hitbox.x + hitbox.w &&  
+                cubeY >= hitbox.y &&  
+                cubeY < hitbox.y + hitbox.h 
+            );
+
+        case "left":
+            return (
+                cubeX + cubeW > hitbox.x &&
+                cubeX <= hitbox.x &&
+                cubeY + cubeH > hitbox.y &&
+                cubeY < hitbox.y + hitbox.h
+            );
+
+        case "right":
+            return (
+                cubeX + cubeW >= hitbox.x + hitbox.w &&  
+                cubeX < hitbox.x + hitbox.w &&  
+                cubeY + cubeH > hitbox.y &&  
+                cubeY < hitbox.y + hitbox.h 
+            );
+    }   
 }
 
 function draw() {
     drawEnv();
+    drawGround();
     drawCube();
     drawSpike();
     boxes.forEach(function (b) {
-        drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array (boxes) sind
+        drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array(boxes) sind
     })
 }
 
