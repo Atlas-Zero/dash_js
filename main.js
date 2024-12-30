@@ -43,16 +43,16 @@ const spike_Hitbox2 = {
 }
 
 const box = {
-    x: obj_spawnpoint.x + 40,
+    x: obj_spawnpoint.x,
     y: obj_spawnpoint.y,
-    w: cube.w + 500,
+    w: cube.w,
     h: cube.h
 }
 
-// const box_positions = [
-//     {x: obj_spawnpoint.x + 40, y: obj_spawnpoint.y,},
-//     {x: obj_spawnpoint.x + 500, y: obj_spawnpoint.y - 30}
-// ]
+const boxes = [
+    { x: obj_spawnpoint.x + 80, y: obj_spawnpoint.y, w: cube.w, h: cube.h },
+    { x: obj_spawnpoint.x + 300, y: obj_spawnpoint.y - 30, w: cube.w, h: cube.h }
+]
 
 var toggle_Hitbox = false;
 
@@ -95,7 +95,10 @@ function gameLogic() {
     spike_Hitbox2.x -= speed.speedx;
 
     //box movement <--
-    box.x -= speed.speedx;
+    boxes.forEach(function (b) {
+        b.x -= speed.speedx;
+    })
+
     if (checkHitbox(cube.x, cube.y, spike_Hitbox) || checkHitbox(cube.x, cube.y, spike_Hitbox2)) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         cube.y = 250;
@@ -126,12 +129,14 @@ function jumpMobile(e) {
 }
 
 function box_jump() {
-    if (checkHitbox(cube.x, cube.y, box)) {
-        cube.onGround = true;
-        cube.y = box.y - box.h;
-        cube.dy = 0;
-        console.log(`checkHitbox`)
-    }
+    boxes.forEach(function (b) {
+        if (checkHitbox(cube.x, cube.y, b)) {
+            cube.onGround = true;
+            cube.y = b.y - b.h;
+            cube.dy = 0;
+            console.log(`checkHitbox`)
+        }
+    })
 }
 
 function drawEnv() {
@@ -176,11 +181,10 @@ function drawSpike_Hitbox2() {
 // });
 //hätte wahrscheinlich eh nicht funktioniert....
 
-function drawBox(x, y) {
+function drawBox(x, y, w, h) {
     ctx.fillStyle = "blue"
-    ctx.fillRect(x, y, box.w, box.h);
+    ctx.fillRect(x, y, w, h);
 }
-
 
 function drawHitbox(e) {
     if (e.key === "h" || e.key === "H") {
@@ -202,8 +206,9 @@ function draw() {
     drawEnv();
     drawCube();
     drawSpike();
-    drawBox(box.x, box.y);
-    drawBox(box.x + 500, box.y - 30);
+    boxes.forEach(function (b) {
+        drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array (boxes) sind
+    })
 }
 
 function cyclic() {
