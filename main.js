@@ -106,13 +106,15 @@ function gameLogic() {
     //unsafe object
     if (checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox, "top") || checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox2, "top")) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cube.y = 250;
         window.alert("Game Over");
         location.reload();
     }
 
     //out of frame
-    if (cube.x + cube.w < 0){
+    if (cube.x + cube.w < -10){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        cube.y = 250;
         window.alert("Game Over");
         location.reload
     }
