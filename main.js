@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 
 const cube = {
     x: 250,
-    y: 100,
+    y: canvas.height - 100,
     w: 30,
     h: 30,
     dy: 5,
@@ -14,32 +14,53 @@ const cube = {
     onGround: false
 }
 
+const obj_spawnpoint = {
+    x: canvas.width + 100,
+    y: canvas.height - 100
+}
+
 const spike = {
-    point1x: canvas.width - 200, //Startpunkt
-    point1y: canvas.height - 70,
-    point2x: canvas.width - 185, //Spitze
-    point2y: canvas.height - 100,
-    point3x: canvas.width - 170, //Endpunkt
-    point3y: canvas.height - 70
+    point1x: obj_spawnpoint.x + 15, //Startpunkt, Spitze
+    point1y: obj_spawnpoint.y,
+    point2x: obj_spawnpoint.x + cube.w, //rechte Ecke
+    point2y: obj_spawnpoint.y + cube.h,
+    point3x: obj_spawnpoint.x, //linke Ecke, Endpunkt
+    point3y: obj_spawnpoint.y + cube.h
 }
 
 const spike_Hitbox = {
-    x: canvas.width - 185,
-    y: canvas.height - 95,
+    x: (spike.point1x + spike.point3x) / 2 + 8, //15
+    y: spike.point1y + 5, //5
     w: 10,
     h: 20
 }
 
 const spike_Hitbox2 = {
-    x: canvas.width - 190,
-    y: canvas.height - 85,
+    x: (spike.point1x + spike.point3x) / 2 + 3, //10
+    y: spike.point1y + 15, //15
     w: 20,
     h: 15
 }
 
+const box = {
+    x: obj_spawnpoint.x + 40,
+    y: obj_spawnpoint.y,
+    w: cube.w + 500,
+    h: cube.h
+}
+
+// const box_positions = [
+//     {x: obj_spawnpoint.x + 40, y: obj_spawnpoint.y,},
+//     {x: obj_spawnpoint.x + 500, y: obj_spawnpoint.y - 30}
+// ]
+
+var toggle_Hitbox = false;
+
 var speed = {
     speedx: 5.5
 }
+
+var box_top_y = 0;
 
 function start() {
     canvas.focus();
@@ -63,6 +84,9 @@ function gameLogic() {
         cube.onGround = false;
     }
 
+    //box jump
+    box_jump();
+
     //spike movement <--
     spike.point1x -= speed.speedx;  //können hier auch += schreiben und speed.speedx auf -0.5 ändern, sieht vlt verständlicher aus
     spike.point2x -= speed.speedx;
@@ -70,13 +94,15 @@ function gameLogic() {
     spike_Hitbox.x -= speed.speedx;
     spike_Hitbox2.x -= speed.speedx;
 
+    //box movement <--
+    box.x -= speed.speedx;
     if (checkHitbox(cube.x, cube.y, spike_Hitbox) || checkHitbox(cube.x, cube.y, spike_Hitbox2)) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         cube.y = 250;
         window.alert("Game Over");
         location.reload();
     }
-    if (toggle_Hitbox === true){
+    if (toggle_Hitbox === true) {
         drawSpike_Hitbox();
         drawSpike_Hitbox2();
     }
@@ -86,6 +112,7 @@ function jumpPc(e) {
     // pc
     if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) {
         cube.dy = cube.jumpStrength;
+        console.log(`Jump PC`);
     }
 }
 
@@ -94,6 +121,16 @@ function jumpMobile(e) {
     e.preventDefault();
     if (cube.onGround) {
         cube.dy = cube.jumpStrength;
+        console.log(`Jump Mobile`);
+    }
+}
+
+function box_jump() {
+    if (checkHitbox(cube.x, cube.y, box)) {
+        cube.onGround = true;
+        cube.y = box.y - box.h;
+        cube.dy = 0;
+        console.log(`checkHitbox`)
     }
 }
 
@@ -103,11 +140,16 @@ function drawEnv() {
 }
 
 function drawCube() {
+    ctx.lineWidth = 1;
     ctx.fillStyle = "ghostwhite";
+    ctx.strokeStyle = "red"; // dreieck 2,5D!?
     ctx.fillRect(cube.x, cube.y, cube.w, cube.h);
+    ctx.stroke();
 }
 
 function drawSpike() {
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
 
     ctx.beginPath();
     ctx.moveTo(spike.point1x, spike.point1y);
@@ -119,19 +161,28 @@ function drawSpike() {
     ctx.stroke();
 }
 
-function drawSpike_Hitbox() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
+function drawSpike_Hitbox() {
     ctx.fillStyle = "red";
     ctx.fillRect(spike_Hitbox.x, spike_Hitbox.y, spike_Hitbox.w, spike_Hitbox.h);
 }
 
-function drawSpike_Hitbox2() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
+function drawSpike_Hitbox2() {
     ctx.fillStyle = "red";
     ctx.fillRect(spike_Hitbox2.x, spike_Hitbox2.y, spike_Hitbox2.w, spike_Hitbox2.h);
 }
 
-var toggle_Hitbox = false;
+// box_positions.forEach(function(positions) {
+//     function drawBox(positions.x, positions.y);
+// });
+//hätte wahrscheinlich eh nicht funktioniert....
 
-function drawHitbox(e){
+function drawBox(x, y) {
+    ctx.fillStyle = "blue"
+    ctx.fillRect(x, y, box.w, box.h);
+}
+
+
+function drawHitbox(e) {
     if (e.key === "h" || e.key === "H") {
         toggle_Hitbox = !toggle_Hitbox;
         console.log(`Toggle Hitbox: ${toggle_Hitbox}`);
@@ -147,9 +198,15 @@ function checkHitbox(cubeX, cubeY, hitbox) {
     );
 }
 
-function cyclic() {
+function draw() {
     drawEnv();
     drawCube();
     drawSpike();
+    drawBox(box.x, box.y);
+    drawBox(box.x + 500, box.y - 30);
+}
+
+function cyclic() {
+    draw();
     gameLogic();
 }
