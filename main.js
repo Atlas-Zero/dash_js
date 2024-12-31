@@ -36,9 +36,9 @@ const spike_Hitbox = {
 }
 
 const spike_Hitbox2 = {
-    x: (spike.point1x + spike.point3x) / 2 + 3, //10
+    x: (spike.point1x + spike.point3x) / 2 + 1, //10
     y: spike.point1y + 15, //15
-    w: 20,
+    w: 23,
     h: 15
 }
 
@@ -61,6 +61,7 @@ var speed = {
 }
 
 var box_top_y = 0;
+
 
 function start() {
     canvas.focus();
@@ -106,7 +107,7 @@ function gameLogic() {
     cube_under_box();
 
     //unsafe object
-    if (checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox, "top") || checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox2, "top")) {
+    if (checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox, "top") || checkHitbox(cube.x, cube.y, cube.w, cube.h, spike_Hitbox2, "left")) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         cube.y = 250;
         window.alert("Game Over");
@@ -114,7 +115,7 @@ function gameLogic() {
     }
 
     //out of frame
-    if (cube.x + cube.w < -10){
+    if (cube.x + cube.w < -10) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         cube.y = canvas.width - 70;
         cube.x = 100;
@@ -157,8 +158,8 @@ function box_jump() {
 }
 
 function cube_front_box() {
-    boxes.forEach(function (b){
-        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "left")){
+    boxes.forEach(function (b) {
+        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "left")) {
             cube.x -= speed.speedx;
             cube.x = b.x - cube.w;
             console.log(`checkHitboxLeft`)
@@ -166,9 +167,9 @@ function cube_front_box() {
     })
 }
 
-function cube_under_box(){
-    boxes.forEach(function (b){
-        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "bottom")){
+function cube_under_box() {
+    boxes.forEach(function (b) {
+        if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "bottom")) {
             cube.y = b.y + b.h;
             console.log(`checkHitboxBottom`)
         }
@@ -270,7 +271,9 @@ function draw() {
     drawEnv();
     drawGround();
     drawCube();
-    drawSpike();
+    if (spike.point2x > 0) {
+        drawSpike();
+    }
     boxes.forEach(function (b) {
         drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array(boxes) sind
     })
