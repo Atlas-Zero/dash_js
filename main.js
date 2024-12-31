@@ -274,9 +274,11 @@ function draw() {
     if (spike.point2x > 0) {
         drawSpike();
     }
-    boxes.forEach(function (b) {
-        drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array(boxes) sind
-    })
+    if (box.x + box.w > 0){
+        boxes.forEach(function (b) {
+            drawBox(b.x, b.y, b.w, b.h); // funktioniert nur wenn alle Werte im Array(boxes) sind
+        })
+    }
 }
 
 function cyclic() {
