@@ -7,15 +7,17 @@ let gameStarted = false;
 
 function drawStartScreen() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-    ctx.fillStyle = "black"; // Background color
+    ctx.fillStyle = "#111"; // Background color
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "white"; // Text color
     ctx.textAlign = "center";
 
-    ctx.font = "30px Berlin Sans FB Demi";
+    fontSize = canvas.height * 0.08;
+    fontSize2 = canvas.height * 0.03;
+    ctx.font = `${fontSize}px Berlin Sans FB Demi`;
     ctx.fillText("Welcome to  D A S H", canvas.width / 2, canvas.height / 2.25);
-    ctx.font = "20px Cascadia Mono"
+    ctx.font = `${fontSize2}px Cascadia Mono`;
     ctx.fillText("Press Space or Tap to Start", canvas.width / 2, canvas.height / 2);
 }
 
