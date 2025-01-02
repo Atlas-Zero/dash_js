@@ -1,6 +1,6 @@
 const canvas = document.getElementById("mainCanvas");
-canvas.width = window.innerWidth * 0.8;
-canvas.height = window.innerHeight * 0.8;
+canvas.width = window.innerWidth * 0.9;
+canvas.height = window.innerHeight * 0.9;
 const ctx = canvas.getContext("2d");
 
 let gameStarted = false;
@@ -34,8 +34,8 @@ function start() {
 
 // player cube
 const cube = {
-    x: 100,
-    y: 500,
+    x: canvas.width * 0.2,
+    y: canvas.height - 500,
     w: 30,
     h: 30,
     dy: 5,
