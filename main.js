@@ -27,7 +27,8 @@ function start() {
     window.addEventListener("touchstart", jumpMobile);
     setInterval(cyclic, 16); // ~60 FPS
     setInterval(randSpike, 1500); // Random chance for spike every 1.5 seconds
-    setInterval(addSpeed, 10000) // Add speed every 10 seconds
+    setInterval(addSpeed, 10000); // Add speed every 10 seconds
+    setInterval(counter, 1000);
 }
 
 
@@ -73,7 +74,7 @@ function cubeMovement() {
 
 // Define (change in) speed
 let speed = 4;
-function addSpeed() {5
+function addSpeed() {
     speed = Math.min(speed * 1.2, 36); // Cap speed at 36
     console.log("Added speed. Current speed:", speed)
 }
@@ -99,8 +100,9 @@ function generateSpike() {
     
     spikes.push(newSpike);
     
-    if (spikes.length > 5) { // Limit spikes to 5 at a time
-        spikes.shift();
+    // Limit spikes to 5 at a time
+    if (spikes.length > 5) { 
+        spikes.pop();
         console.log("Spike limit reached, removing oldest spike");
     }
 }
@@ -224,6 +226,15 @@ function drawSpikes() {
             ctx.fillRect(spike.hitbox2.x, spike.hitbox2.y, spike.hitbox2.w, spike.hitbox2.h);
         }
     });
+}
+
+// a simple, yet beautiful counter
+let time = 0
+function counter() {
+    if (gameStarted) {
+    time = -~time
+    document.getElementById("timer").innerHTML = `Survived for: ${time}s`;    
+    }
 }
 
 function cyclic() {
