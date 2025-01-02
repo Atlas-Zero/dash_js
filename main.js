@@ -3,82 +3,113 @@ canvas.width = window.innerWidth * 0.8;
 canvas.height = window.innerHeight * 0.8;
 const ctx = canvas.getContext("2d");
 
+
+function start() {
+    canvas.focus();
+    window.addEventListener("keypress", jumpPc);
+    window.addEventListener("touchstart", jumpMobile);
+    setInterval(cyclic, 16); // Reduced interval for better performance (~33 FPS)
+    setInterval(randSpike, 1500); // Generate spikes every 1.5 seconds
+}
+
+const speed = { speedx: 5.5 }; // Define speed object
+
 const cube = {
-    x: 250,
-    y: 100,
-    w: 30,
-    h: 30,
+    // player cube
+    x: 100,
+    y: 500,
+    w: 20,
+    h: 20,
     dy: 5,
     gravity: 0.5,
     jumpStrength: -10,
     onGround: false
+};
+
+const spikes = []; // Array to hold all spikes
+
+function generateSpike() {
+    const spikeBaseX = canvas.width; // Start off-screen on the right
+    const spikeBaseY = canvas.height - 200; // Base Y position of the spike
+    const spikeHeight = 30; // Height of the spike
+
+    const newSpike = {
+        point1x: spikeBaseX,
+        point1y: spikeBaseY,
+        point2x: spikeBaseX + 15,
+        point2y: spikeBaseY - spikeHeight,
+        point3x: spikeBaseX + 30,
+        point3y: spikeBaseY,
+        hitbox1: { x: spikeBaseX + 10, y: spikeBaseY - spikeHeight + 5, w: 10, h: spikeHeight - 10 },
+        hitbox2: { x: spikeBaseX + 5, y: spikeBaseY - spikeHeight / 2, w: 20, h: 15 }
+    };
+
+    spikes.push(newSpike);
+
+    if (spikes.length > 20) { // Limit spikes to 20 at a time
+        spikes.shift();
+        console.log("Spike limit reached, removing oldest spike");
+    }
 }
 
-const spike = {
-    point1x: canvas.width - 200, //Startpunkt
-    point1y: canvas.height - 70,
-    point2x: canvas.width - 185, //Spitze
-    point2y: canvas.height - 100,
-    point3x: canvas.width - 170, //Endpunkt
-    point3y: canvas.height - 70
+function updateSpikes() {
+    for (let i = spikes.length - 1; i >= 0; i--) {
+        const spike = spikes[i];
+
+        // Move spike left
+        spike.point1x -= speed.speedx;
+        spike.point2x -= speed.speedx;
+        spike.point3x -= speed.speedx;
+        spike.hitbox1.x -= speed.speedx;
+        spike.hitbox2.x -= speed.speedx;
+
+        // Remove spike if it goes off-screen
+        if (spike.point3x < 0) {
+            spikes.splice(i, 1);
+            console.log("Spike removed, remaining:", spikes.length);
+        }
+
+        // Check for collisions
+        if (checkHitbox(cube.x, cube.y, spike.hitbox1) || checkHitbox(cube.x, cube.y, spike.hitbox2)) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            cube.y = 250;
+            window.alert("Game Over");
+            location.reload();
+        }
+    }
 }
 
-const spike_Hitbox = {
-    x: canvas.width - 185,
-    y: canvas.height - 95,
-    w: 10,
-    h: 20
+function drawSpikes() {
+    spikes.forEach(spike => {
+        ctx.beginPath();
+        ctx.moveTo(spike.point1x, spike.point1y);
+        ctx.lineTo(spike.point2x, spike.point2y);
+        ctx.lineTo(spike.point3x, spike.point3y);
+        ctx.closePath();
+        ctx.fillStyle = "ghostwhite";
+        ctx.fill();
+        ctx.stroke();
+
+        if (toggle_Hitbox) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(spike.hitbox1.x, spike.hitbox1.y, spike.hitbox1.w, spike.hitbox1.h);
+            ctx.fillRect(spike.hitbox2.x, spike.hitbox2.y, spike.hitbox2.w, spike.hitbox2.h);
+        }
+    });
 }
 
-const spike_Hitbox2 = {
-    x: canvas.width - 190,
-    y: canvas.height - 85,
-    w: 20,
-    h: 15
-}
-
-var speed = {
-    speedx: 5.5
-}
-
-function start() {
-    canvas.focus();
-    window.addEventListener("keypress", jumpPc, false);
-    window.addEventListener("touchstart", jumpMobile, false);
-    window.addEventListener("keydown", drawHitbox, false);
-    setInterval(cyclic, 15)
-}
-
-function gameLogic() {
+function cubeMovement() {
     // gravity
-    cube.dy += cube.gravity;
     cube.y += cube.dy;
+    cube.dy += cube.gravity;
 
     // limit: 
-    if (cube.y >= canvas.height - 100) {
-        cube.y = canvas.height - 100;
+    if (cube.y >= canvas.height - 200) {
         cube.dy = 0;
+        cube.y = canvas.height - 200;
         cube.onGround = true;
     } else {
         cube.onGround = false;
-    }
-
-    //spike movement <--
-    spike.point1x -= speed.speedx;  //können hier auch += schreiben und speed.speedx auf -0.5 ändern, sieht vlt verständlicher aus
-    spike.point2x -= speed.speedx;
-    spike.point3x -= speed.speedx;
-    spike_Hitbox.x -= speed.speedx;
-    spike_Hitbox2.x -= speed.speedx;
-
-    if (checkHitbox(cube.x, cube.y, spike_Hitbox) || checkHitbox(cube.x, cube.y, spike_Hitbox2)) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        cube.y = 250;
-        window.alert("Game Over");
-        location.reload();
-    }
-    if (toggle_Hitbox === true){
-        drawSpike_Hitbox();
-        drawSpike_Hitbox2();
     }
 }
 
@@ -99,7 +130,7 @@ function jumpMobile(e) {
 
 function drawEnv() {
     // refresh canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawCube() {
@@ -107,49 +138,29 @@ function drawCube() {
     ctx.fillRect(cube.x, cube.y, cube.w, cube.h);
 }
 
-function drawSpike() {
-
-    ctx.beginPath();
-    ctx.moveTo(spike.point1x, spike.point1y);
-    ctx.lineTo(spike.point2x, spike.point2y);
-    ctx.lineTo(spike.point3x, spike.point3y);
-    ctx.closePath();
-    ctx.fillStyle = "ghostwhite";
-    ctx.fill();
-    ctx.stroke();
-}
-
-function drawSpike_Hitbox() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
-    ctx.fillStyle = "red";
-    ctx.fillRect(spike_Hitbox.x, spike_Hitbox.y, spike_Hitbox.w, spike_Hitbox.h);
-}
-
-function drawSpike_Hitbox2() { //wieder einfügen um die Hitbox zu sehen (im cyclic nicht vergessen :,) )
-    ctx.fillStyle = "red";
-    ctx.fillRect(spike_Hitbox2.x, spike_Hitbox2.y, spike_Hitbox2.w, spike_Hitbox2.h);
-}
-
-var toggle_Hitbox = false;
-
-function drawHitbox(e){
-    if (e.key === "h" || e.key === "H") {
-        toggle_Hitbox = !toggle_Hitbox;
-        console.log(`Toggle Hitbox: ${toggle_Hitbox}`);
-    }
-}
-
-function checkHitbox(cubeX, cubeY, hitbox) {
-    return (
-        cubeX + cube.w > hitbox.x &&  // cube: rechts --> hitbox: links
-        cubeX < hitbox.x + hitbox.w &&  // cube: links --> hitbox rechts (wird eigentlich nicht gebraucht)
-        cubeY + cube.h > hitbox.y &&  // cube: unten --> hitbox: oben
-        cubeY < hitbox.y + hitbox.h // cube: oben --> hitbox unten (wird eigentlich nicht gebraucht)
-    );
-}
-
 function cyclic() {
     drawEnv();
     drawCube();
-    drawSpike();
-    gameLogic();
+    drawSpikes();
+    cubeMovement();
+    updateSpikes();
+}
+
+function randSpike() {
+    // Randomly generate spikes
+    if (Math.random() < 0.3) { // 30% chance to generate a spike
+        generateSpike();
+        console.log("Spike generated, total spikes:", spikes.length);
+    }
+}
+
+let toggle_Hitbox = false; // Toggle hitboxes for debugging
+
+function checkHitbox(cubeX, cubeY, hitbox) {
+    return (
+        cubeX + cube.w > hitbox.x &&  // cube: right edge --> hitbox: left edge
+        cubeX < hitbox.x + hitbox.w &&  // cube: left edge --> hitbox: right edge
+        cubeY + cube.h > hitbox.y &&  // cube: bottom edge --> hitbox: top edge
+        cubeY < hitbox.y + hitbox.h // cube: top edge --> hitbox: bottom edge
+    );
 }
