@@ -9,28 +9,51 @@ function start() {
     window.addEventListener("keypress", jumpPc);
     window.addEventListener("touchstart", jumpMobile);
     setInterval(cyclic, 16); // ~60 FPS
-    setInterval(randSpike, 1500); // Generate spikes every 1.5 seconds
-    setInterval(spikeSpeed, 20000) // Add speed every 20 seconds
+    setInterval(randSpike, 1500); // Random chance for spike every 1.5 seconds
+    setInterval(addSpeed, 8000) // Add speed every 8 seconds
 }
 
 
+// player cube
 const cube = {
-    // player cube
     x: 100,
     y: 500,
     w: 20,
     h: 20,
     dy: 5,
-    gravity: 0.5,
+    gravity: 0.75,
     jumpStrength: -10,
     onGround: false
 };
 
-const spikes = []; // Array to hold all spikes
+function cubeMovement() {
+    // gravity
+    cube.y += cube.dy;
+    cube.dy += cube.gravity;
+
+    // limit: 
+    if (cube.y >= canvas.height - 200) {
+        cube.dy = 0;
+        cube.y = canvas.height - 200;
+        cube.onGround = true;
+    } else {
+        cube.onGround = false;
+    }
+}
+
+// Define speed object
+let speed = 4;
+function addSpeed() {5
+    speed = Math.min(speed * 1.2, 36); // Cap speed at 36
+    console.log("Added speed. Current speed:", speed)
+}
+
+// Array to hold all spikes
+const spikes = []; 
 
 function generateSpike() {
     const spikeBaseX = canvas.width; // Start off-screen on the right
-    const spikeBaseY = canvas.height - 200; // Base Y position of the spike
+    const spikeBaseY = canvas.height - 200 + cube.h; // Base Y position of the spike
     const spikeHeight = 30; // Height of the spike
     
     const newSpike = {
@@ -46,7 +69,7 @@ function generateSpike() {
     
     spikes.push(newSpike);
     
-    if (spikes.length > 20) { // Limit spikes to 20 at a time
+    if (spikes.length > 5) { // Limit spikes to 5 at a time
         spikes.shift();
         console.log("Spike limit reached, removing oldest spike");
     }
@@ -57,11 +80,11 @@ function updateSpikes() {
         const spike = spikes[i];
         
         // Move spike left
-        spike.point1x -= speed.speedx;
-        spike.point2x -= speed.speedx;
-        spike.point3x -= speed.speedx;
-        spike.hitbox1.x -= speed.speedx;
-        spike.hitbox2.x -= speed.speedx;
+        spike.point1x -= speed;
+        spike.point2x -= speed;
+        spike.point3x -= speed;
+        spike.hitbox1.x -= speed;
+        spike.hitbox2.x -= speed;
         
         // Remove spike if it goes off-screen
         if (spike.point3x < 0) {
@@ -79,44 +102,32 @@ function updateSpikes() {
     }
 }
 
-const speed = { speedx: 5 }; // Define speed object
-
-function spikeSpeed() {
-    speed.speedx = speed.speedx * 1.5
-}
-
-function drawSpikes() {
-    spikes.forEach(spike => {
-        ctx.beginPath();
-        ctx.moveTo(spike.point1x, spike.point1y);
-        ctx.lineTo(spike.point2x, spike.point2y);
-        ctx.lineTo(spike.point3x, spike.point3y);
-        ctx.closePath();
-        ctx.fillStyle = "ghostwhite";
-        ctx.fill();
-        ctx.stroke();
-
-        if (toggle_Hitbox) {
-            ctx.fillStyle = "red";
-            ctx.fillRect(spike.hitbox1.x, spike.hitbox1.y, spike.hitbox1.w, spike.hitbox1.h);
-            ctx.fillRect(spike.hitbox2.x, spike.hitbox2.y, spike.hitbox2.w, spike.hitbox2.h);
-        }
-    });
-}
-
-function cubeMovement() {
-    // gravity
-    cube.y += cube.dy;
-    cube.dy += cube.gravity;
-
-    // limit: 
-    if (cube.y >= canvas.height - 200) {
-        cube.dy = 0;
-        cube.y = canvas.height - 200;
-        cube.onGround = true;
-    } else {
-        cube.onGround = false;
+// Randomly generate spikes
+function randSpike() {
+    if (speed < 14 && Math.random() < 0.5) { // 50% chance to generate a spike
+        generateSpike();
+        console.log("Spike generated, total spikes:", spikes.length);
     }
+    if (speed >= 14 && Math.random() < 0.6) {
+        generateSpike();
+        console.log("Spike generated, total spikes:", spikes.length);
+    }
+    if (speed >= 28 && Math.random() < 0.8) {
+        generateSpike();
+        console.log("Spike generated, total spikes:", spikes.length);
+    }
+}
+
+// Toggle hitboxes for debugging
+let toggle_Hitbox = false; 
+
+function checkHitbox(cubeX, cubeY, hitbox) {
+    return (
+        cubeX + cube.w > hitbox.x &&  // cube: right edge --> hitbox: left edge
+        cubeX < hitbox.x + hitbox.w &&  // cube: left edge --> hitbox: right edge
+        cubeY + cube.h > hitbox.y &&  // cube: bottom edge --> hitbox: top edge
+        cubeY < hitbox.y + hitbox.h // cube: top edge --> hitbox: bottom edge
+    );
 }
 
 function jumpPc(e) {
@@ -144,29 +155,29 @@ function drawCube() {
     ctx.fillRect(cube.x, cube.y, cube.w, cube.h);
 }
 
+function drawSpikes() {
+    spikes.forEach(spike => {
+        ctx.beginPath();
+        ctx.moveTo(spike.point1x, spike.point1y);
+        ctx.lineTo(spike.point2x, spike.point2y);
+        ctx.lineTo(spike.point3x, spike.point3y);
+        ctx.closePath();
+        ctx.fillStyle = "ghostwhite";
+        ctx.fill();
+        ctx.stroke();
+
+        if (toggle_Hitbox) {
+            ctx.fillStyle = "red";
+            ctx.fillRect(spike.hitbox1.x, spike.hitbox1.y, spike.hitbox1.w, spike.hitbox1.h);
+            ctx.fillRect(spike.hitbox2.x, spike.hitbox2.y, spike.hitbox2.w, spike.hitbox2.h);
+        }
+    });
+}
+
 function cyclic() {
     drawEnv();
     drawCube();
     drawSpikes();
     cubeMovement();
     updateSpikes();
-}
-
-function randSpike() {
-    // Randomly generate spikes
-    if (Math.random() < 0.4) { // 40% chance to generate a spike
-        generateSpike();
-        console.log("Spike generated, total spikes:", spikes.length);
-    }
-}
-
-let toggle_Hitbox = false; // Toggle hitboxes for debugging
-
-function checkHitbox(cubeX, cubeY, hitbox) {
-    return (
-        cubeX + cube.w > hitbox.x &&  // cube: right edge --> hitbox: left edge
-        cubeX < hitbox.x + hitbox.w &&  // cube: left edge --> hitbox: right edge
-        cubeY + cube.h > hitbox.y &&  // cube: bottom edge --> hitbox: top edge
-        cubeY < hitbox.y + hitbox.h // cube: top edge --> hitbox: bottom edge
-    );
 }
