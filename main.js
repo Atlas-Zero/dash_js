@@ -3,6 +3,21 @@ canvas.width = window.innerWidth * 0.8;
 canvas.height = window.innerHeight * 0.8;
 const ctx = canvas.getContext("2d");
 
+let gameStarted = false;
+
+function drawStartScreen() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    ctx.fillStyle = "black"; // Background color
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white"; // Text color
+    ctx.textAlign = "center";
+
+    ctx.font = "30px Berlin Sans FB Demi";
+    ctx.fillText("Welcome to  D A S H", canvas.width / 2, canvas.height / 2.25);
+    ctx.font = "20px Cascadia Mono"
+    ctx.fillText("Press Space or Tap to Start", canvas.width / 2, canvas.height / 2);
+}
 
 function start() {
     canvas.focus();
@@ -10,7 +25,7 @@ function start() {
     window.addEventListener("touchstart", jumpMobile);
     setInterval(cyclic, 16); // ~60 FPS
     setInterval(randSpike, 1500); // Random chance for spike every 1.5 seconds
-    setInterval(addSpeed, 8000) // Add speed every 8 seconds
+    setInterval(addSpeed, 10000) // Add speed every 10 seconds
 }
 
 
@@ -18,12 +33,14 @@ function start() {
 const cube = {
     x: 100,
     y: 500,
-    w: 20,
-    h: 20,
+    w: 30,
+    h: 30,
     dy: 5,
     gravity: 0.75,
     jumpStrength: -10,
-    onGround: false
+    onGround: false,
+    rotation: 0,
+    rotationSpeed: Math.PI / 60
 };
 
 function cubeMovement() {
@@ -32,16 +49,27 @@ function cubeMovement() {
     cube.dy += cube.gravity;
 
     // limit: 
-    if (cube.y >= canvas.height - 200) {
+    if (cube.y >= canvas.height - 100) {
         cube.dy = 0;
-        cube.y = canvas.height - 200;
+        cube.y = canvas.height - 100;
         cube.onGround = true;
+        cube.rotation = 0;
     } else {
         cube.onGround = false;
     }
+
+    // Increment rotation if jumping
+    if (!cube.onGround) {
+        cube.rotation += cube.rotationSpeed;
+
+        // Cap rotation at 90 degrees
+        if (cube.rotation >= Math.PI / 2) {
+            cube.rotation = Math.PI / 2;
+        }
+    }
 }
 
-// Define speed object
+// Define (change in) speed
 let speed = 4;
 function addSpeed() {5
     speed = Math.min(speed * 1.2, 36); // Cap speed at 36
@@ -53,7 +81,7 @@ const spikes = [];
 
 function generateSpike() {
     const spikeBaseX = canvas.width; // Start off-screen on the right
-    const spikeBaseY = canvas.height - 200 + cube.h; // Base Y position of the spike
+    const spikeBaseY = canvas.height - 100 + cube.h; // Base Y position of the spike
     const spikeHeight = 30; // Height of the spike
     
     const newSpike = {
@@ -94,9 +122,8 @@ function updateSpikes() {
         
         // Check for collisions
         if (checkHitbox(cube.x, cube.y, spike.hitbox1) || checkHitbox(cube.x, cube.y, spike.hitbox2)) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            cube.y = 250;
             window.alert("Game Over");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             location.reload();
         }
     }
@@ -132,6 +159,11 @@ function checkHitbox(cubeX, cubeY, hitbox) {
 
 function jumpPc(e) {
     // pc
+    if (!gameStarted) {
+        gameStarted = true;
+        return; // Exit to avoid an immediate jump
+    }
+    // jump
     if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) {
         cube.dy = cube.jumpStrength;
     }
@@ -140,6 +172,11 @@ function jumpPc(e) {
 function jumpMobile(e) {
     // mobile
     e.preventDefault();
+    if (!gameStarted) {
+        gameStarted = true;
+        return; // Exit to avoid an immediate jump
+    }
+    // jump (again, obv)
     if (cube.onGround) {
         cube.dy = cube.jumpStrength;
     }
@@ -151,8 +188,21 @@ function drawEnv() {
 }
 
 function drawCube() {
+    ctx.save();
+
+    // Translate canvas to cube's center
+    let centerX = cube.x + cube.w / 2;
+    let centerY = cube.y + cube.h / 2;
+    ctx.translate(centerX, centerY);
+
+    // Rotate canvas
+    ctx.rotate(cube.rotation);
+
+    // Draw the cube at the new rotated state
     ctx.fillStyle = "ghostwhite";
-    ctx.fillRect(cube.x, cube.y, cube.w, cube.h);
+    ctx.fillRect(-cube.w / 2, -cube.h / 2, cube.w, cube.h);
+
+    ctx.restore();
 }
 
 function drawSpikes() {
@@ -175,6 +225,11 @@ function drawSpikes() {
 }
 
 function cyclic() {
+    if (!gameStarted) {
+        drawStartScreen();
+        return;
+    }
+
     drawEnv();
     drawCube();
     drawSpikes();
