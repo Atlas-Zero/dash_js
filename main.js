@@ -52,9 +52,9 @@ function updateCube() {
     cube.dy += cube.gravity;
 
     // limit: 
-    if (cube.y >= (canvas.height * 0.854) - cube.h) {
+    if (cube.y >= (canvas.height * 0.852) - cube.h) {
         cube.dy = 0;
-        cube.y = (canvas.height * 0.854) - cube.h;
+        cube.y = (canvas.height * 0.852) - cube.h;
         cube.onGround = true;
         cube.rotation = 0;
     } else {
@@ -84,7 +84,7 @@ const spikes = [];
 
 function generateSpike() {
     const spikeBaseX = canvas.width; // start off-screen on the right
-    const spikeBaseY = canvas.height  * 0.854; // base Y position of the spike
+    const spikeBaseY = canvas.height  * 0.852; // base Y position of the spike
     const spikeHeight = 30; // height of the spike
     
     const newSpike = {
@@ -161,6 +161,7 @@ function checkHitbox(cubeX, cubeY, hitbox) {
     );
 }
 
+
 function jumpPc(e) {
     // pc
     if (!gameStarted) {
@@ -185,6 +186,88 @@ function jumpMobile(e) {
         cube.dy = cube.jumpStrength;
     }
 }
+
+
+// a simple, yet beautiful counter
+let time = 0
+function counter() {
+    if (gameStarted) {
+    time = -~time
+    document.getElementById("timer").innerHTML = `Survived for: ${time}s`;    
+    }
+}
+
+function drawEnv() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+}
+
+const background = {
+    x1: 0,
+    x2: 0,
+    x3: 0,
+    x4: 0,
+    x5: 0,
+    layer1: new Image(),
+    layer2: new Image(),
+    layer3: new Image(),
+    layer4: new Image(),
+    layer5: new Image(),
+    speed1: 0.1,
+    speed2: 0.2,
+    speed3: 0.3,
+    speed4: 0.4,
+    speed5: 0.5
+}
+
+const floor = {
+    x: 0,
+    image: new Image()
+}
+
+// sources 
+background.layer1.src = "./img/1.png";
+background.layer2.src = "./img/2.png";
+background.layer3.src = "./img/3.png";
+background.layer4.src = "./img/4.png";
+background.layer5.src = "./img/5.png";
+floor.image.src = "./img/floor.jpg";
+
+function updateBackground(speed) {
+    // move all layers 
+    background.x1 -= speed * background.speed1;
+    background.x2 -= speed * background.speed2;
+    background.x3 -= speed * background.speed3;
+    background.x4 -= speed * background.speed4;
+    background.x5 -= speed * background.speed5;
+
+    // reset for looping effect
+    if (background.x1 <= -canvas.width) {
+        background.x1 = 0;
+    }
+    if (background.x2 <= -canvas.width) {
+        background.x2 = 0;
+    }
+    if (background.x3 <= -canvas.width) {
+        background.x3 = 0;
+    }
+    if (background.x4 <= -canvas.width) {
+        background.x4 = 0;
+    }
+    if (background.x5 <= -canvas.width) {
+        background.x5 = 0;
+    }
+}
+
+function updatefloor(speed) {
+    // move the floor
+    floor.x -= speed;
+
+    // reset position 
+    if (floor.x <= -canvas.width) {
+        floor.x = 0;
+    }
+}
+
 
 function drawCube() {
     ctx.save();
@@ -223,57 +306,22 @@ function drawSpikes() {
     });
 }
 
-// a simple, yet beautiful counter
-let time = 0
-function counter() {
-    if (gameStarted) {
-    time = -~time
-    document.getElementById("timer").innerHTML = `Survived for: ${time}s`;    
-    }
-}
-
-function drawEnv() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-}
-
-const background = {
-    image: new Image(),
-    x: 0,
-    speed: 1.4
-}
-
-const floor = {
-    image: new Image(),
-    x: 0,
-}
-
-// sources 
-background.image.src = "background.jpg";
-floor.image.src = "floor.jpg";
-
-function updateBackground(speed) {
-    // move background 
-    background.x -= speed * background.speed;
-
-    if (background.x <= -canvas.width) {
-        background.x = 0;
-    }
-}
-
-function updatefloor(speed) {
-    // move the floor
-    floor.x -= speed;
-
-    // reset position 
-    if (floor.x <= -canvas.width) {
-        floor.x = 0;
-    }
-}
-
 function drawBackground() {
     // draw twice for seamless loop
-    ctx.drawImage(background.image, background.x, 0, canvas.width, canvas.height * 0.85);
-    ctx.drawImage(background.image, background.x + canvas.width, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer1, background.x1, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer1, background.x1 + canvas.width, 0, canvas.width, canvas.height * 0.85);
+
+    ctx.drawImage(background.layer2, background.x2, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer2, background.x2 + canvas.width, 0, canvas.width, canvas.height * 0.85);
+
+    ctx.drawImage(background.layer3, background.x3, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer3, background.x3 + canvas.width, 0, canvas.width, canvas.height * 0.85);
+
+    ctx.drawImage(background.layer4, background.x4, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer4, background.x4 + canvas.width, 0, canvas.width, canvas.height * 0.85);
+
+    ctx.drawImage(background.layer5, background.x5, 0, canvas.width, canvas.height * 0.85);
+    ctx.drawImage(background.layer5, background.x5 + canvas.width, 0, canvas.width, canvas.height * 0.85);
 }
 
 function drawFloor() {
