@@ -3,7 +3,7 @@
 - Objekte(safe) bzw. Maps.
 - Musik
 - Cheats (für ein ++ 🙃)
-
+- Hintergrund fix
 ## DONE
 - Hitbox checker | mit "h" oder "H" hitbox sehen(toggle)
 - Objekte(unsafe, z.B. Dreiecke)
