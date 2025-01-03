@@ -35,7 +35,7 @@ function start() {
 // player cube
 const cube = {
     x: canvas.width * 0.2,
-    y: canvas.height - 500,
+    y: 0,
     w: 30,
     h: 30,
     dy: 5,
@@ -52,9 +52,9 @@ function updateCube() {
     cube.dy += cube.gravity;
 
     // limit: 
-    if (cube.y >= canvas.height - 100) {
+    if (cube.y >= (canvas.height * 0.854) - cube.h) {
         cube.dy = 0;
-        cube.y = canvas.height - 100;
+        cube.y = (canvas.height * 0.854) - cube.h;
         cube.onGround = true;
         cube.rotation = 0;
     } else {
@@ -73,9 +73,9 @@ function updateCube() {
 }
 
 // define (change in) speed
-let speed = 4;
+let speed = 4.5;
 function addSpeed() {
-    speed = Math.min(speed * 1.2, 36); // cap speed at 36
+    speed = Math.min(speed * 1.125, 36); // cap speed at 36
     console.log("Added speed. Current speed:", speed)
 }
 
@@ -84,7 +84,7 @@ const spikes = [];
 
 function generateSpike() {
     const spikeBaseX = canvas.width; // start off-screen on the right
-    const spikeBaseY = canvas.height - 100 + cube.h; // base Y position of the spike
+    const spikeBaseY = canvas.height  * 0.854; // base Y position of the spike
     const spikeHeight = 30; // height of the spike
     
     const newSpike = {
@@ -239,7 +239,7 @@ function drawEnv() {
 const background = {
     image: new Image(),
     x: 0,
-    speed: 1.2
+    speed: 1.4
 }
 
 const floor = {
