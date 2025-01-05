@@ -3,16 +3,14 @@ canvas.width = window.innerWidth * 0.9;
 canvas.height = window.innerHeight * 0.9;
 const ctx = canvas.getContext("2d");
 
-let gameStarted = false;
-
 function drawStartScreen() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clear the canvas
     ctx.fillStyle = "#111"; // background color
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    
     ctx.fillStyle = "white"; // text color
     ctx.textAlign = "center";
-
+    
     fontSize = canvas.height * 0.08;
     fontSize2 = canvas.height * 0.03;
     ctx.font = `${fontSize}px Berlin Sans FB Demi`;
@@ -21,10 +19,42 @@ function drawStartScreen() {
     ctx.fillText("Press Space or Tap to Start", canvas.width / 2, canvas.height / 2);
 }
 
+let gameStarted = false;
+let jumpHeld = false;
+
 function start() {
     canvas.focus();
-    window.addEventListener("keypress", jumpPc);
-    window.addEventListener("touchstart", jumpMobile);
+
+
+    window.addEventListener("keydown", (e) => {
+        // pc
+        if (!gameStarted) {
+            gameStarted = true;
+        }
+        
+        // check for space key press
+        if (e.code === "Space") {
+            jumpHeld = true;
+        }
+    });
+    window.addEventListener("keyup", (e) => {
+        if (e.code === "Space") {
+            jumpHeld = false;
+        }
+    });
+
+    window.addEventListener("touchstart", (e) => {
+            // mobile
+            e.preventDefault();
+            if (!gameStarted) {
+                gameStarted = true;
+            } 
+            jumpHeld = true;
+        });
+    window.addEventListener("touchend", () => {
+        jumpHeld = false;
+    });
+
     setInterval(cyclic, 16); // ~60 FPS
     setInterval(randSpike, 1500); // random chance for spike every 1.5 seconds
     setInterval(addSpeed, 10000); // add speed every 10 seconds
@@ -59,6 +89,11 @@ function updateCube() {
         cube.rotation = 0;
     } else {
         cube.onGround = false;
+    }
+
+    // jump
+    if (jumpHeld && cube.onGround) {
+        cube.dy = cube.jumpStrength;
     }
 
     // increment rotation if jumping
@@ -160,33 +195,6 @@ function checkHitbox(cubeX, cubeY, hitbox) {
         cubeY < hitbox.y + hitbox.h // cube: top edge --> hitbox: bottom edge
     );
 }
-
-
-function jumpPc(e) {
-    // pc
-    if (!gameStarted) {
-        gameStarted = true;
-        return; // exit to avoid an immediate jump
-    }
-
-    // jump
-    if ((e.keyCode === 32 || e.code === "Space") && cube.onGround) {
-        cube.dy = cube.jumpStrength;
-    }
-}
-
-function jumpMobile(e) {
-    // mobile
-    e.preventDefault();
-    if (!gameStarted) {
-        gameStarted = true;
-        return;
-    }
-    if (cube.onGround) {
-        cube.dy = cube.jumpStrength;
-    }
-}
-
 
 // a simple, yet beautiful counter
 let time = 0
