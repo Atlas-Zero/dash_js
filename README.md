@@ -2,13 +2,13 @@
 -Musik
 
 ## DONE
--Hitbox checker | hitbox sehen(toggle)
+-Hitbox checker, hitbox sehen(toggle)
 -Würfel rotation
 -Background
 -Random Spikes
 -Geschwindigkeitsänderungen
 -Objekte löschen nachdem sie vom Bild sind (noch keine Lösung gefunden)
--Cheat(s) (für ein ++ 🙃) [mit taste Hitbox von spikes entfernen (godmode)]
+-Cheat(s) (für ein ++ 🙃)
 -Box rotation
 -Menü(Navigation) (startbutton, change color)
 
