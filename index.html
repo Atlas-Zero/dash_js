@@ -1,30 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dash</title>
     <style>
         body {
-            /* dark grey */
+            display: block;
+            align-items: center;
             margin: 0;
             padding: 0;
-            background-color: #222; 
+            background-color: #222;
         }
+
         canvas {
-            /* centre */
             border: #444 solid;
             display: block;
             padding-left: 0;
             padding-right: 0;
-            margin-top: 100px;
             margin-left: auto;
             margin-right: auto;
         }
+
+        p {
+            font-family: Cascadia Mono;
+            font-size: 20px;
+            text-align: center;
+            margin: 0;
+            padding-top: 50px;
+        }
     </style>
 </head>
-<body onload="start()">
+
+<body onload="drawStartScreen()">
+    <p id="timer"></p>  	
     <canvas id="mainCanvas"></canvas>
     <script src="main.js"></script>
 </body>
+
 </html>

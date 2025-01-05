@@ -1,16 +1,18 @@
 ## TODO's
-- Menü(Navigation)
-- Objekte(safe) bzw. Maps.
-- Objekte(unsafe, z.B. Dreiecke)
-- Geschwindigkeitsänderungen
-- Objekt bewegung/drehung ?
-- Musik
-- Objekte löschen nachdem sie vom Bild sind (if statement? solange in canvas)
-- Cheats (für ein ++ 🙃)
-
+-Musik
 
 ## DONE
-- Hitbox checker | mit "h" oder "H" hitbox sehen(toggle)
+-Hitbox checker | hitbox sehen(toggle)
+-Würfel rotation
+-Background
+-Random Spikes
+-Geschwindigkeitsänderungen
+-Objekte löschen nachdem sie vom Bild sind (noch keine Lösung gefunden)
+-Cheat(s) (für ein ++ 🙃) [mit taste Hitbox von spikes entfernen (godmode)]
+-Box rotation
+-Menü(Navigation) (startbutton, change color)
 
-### welp
-funktioniert jetzt mal, aber habe keine Ahnunh wie wir das mit dem "spawnen" der Teile machen sollen :,)
+## CONTROLS:
+-toggle Hitbox: h/H
+-toggle Box Rotation: j/J
+-toggle Damage: g/G (god mode?)
