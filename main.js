@@ -333,7 +333,7 @@ function flying_Box() {
     boxes.forEach(function (b) {
         if (checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "top")
             || checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "left")
-            || checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "bottom")
+            || checkHitbox(cube.x, cube.y, cube.w, cube.h, b, " bottom")
             || checkHitbox(cube.x, cube.y, cube.w, cube.h, b, "right")) {
             cube.x -= speed;
             cube.x = b.x - cube.w;
@@ -504,7 +504,7 @@ function drawCube() {
     ctx.rotate(cube.rotation);
 
     // draw the cube at the new rotated state
-    ctx.fillStyle = cubeColor;
+    ctx.fillStyle = colorArray[colorIndex].color;
     ctx.fillRect(-cube.w / 2, -cube.h / 2, cube.w, cube.h);
     ctx.restore();
 }
@@ -647,13 +647,11 @@ function buttonChangeColor() {
     const buttonColorX = canvas.width / 2 - buttonColorWidth / 2;
     const buttonColorY = canvas.height / 2 + buttonColorHeight * 1.5;
 
-    const menuCube = {
-        x: buttonColorX * 1.68,
-        y: buttonColorY * 1.03,
-        w: 45,
-        h: 45
-    }
-
+    const menuCubeHeight = 45;
+    const menuCubeWidth = 45;
+    const menuCubeX = canvas.width / 2 + buttonColorWidth * 0.3 ; 
+    const menuCubeY = canvas.height / 2 + buttonColorHeight * 1.7;
+    
     // Button styling
     ctx.fillStyle = "grey";
     ctx.fillRect(buttonColorX, buttonColorY, buttonColorWidth, buttonColorHeight);
@@ -661,10 +659,10 @@ function buttonChangeColor() {
     let fontSize2 = canvas.height * 0.03;
     ctx.fillStyle = "white";
     ctx.font = `${fontSize2}px Cascadia Mono`;
-    ctx.fillText("Change Color: ", canvas.width / 2.1, buttonColorY + buttonColorHeight / 1.7);
+    ctx.fillText("Change Color: ", canvas.width / 2.05, buttonColorY + buttonColorHeight / 1.7);
 
     ctx.fillStyle = colorArray[colorIndex].color;
-    ctx.fillRect(menuCube.x, menuCube.y, menuCube.w, menuCube.h);
+    ctx.fillRect(menuCubeX, menuCubeY, menuCubeWidth, menuCubeHeight);
 
 
     canvas.addEventListener("click", function (e) {
@@ -684,7 +682,7 @@ function buttonChangeColor() {
 
             cubeColor = colorArray[colorIndex].color;
             ctx.fillStyle = colorArray[colorIndex].color;
-            ctx.fillRect(menuCube.x, menuCube.y, menuCube.w, menuCube.h);
+            ctx.fillRect(menuCubeX, menuCubeY, menuCubeWidth, menuCubeHeight);
         }
     });
 }
