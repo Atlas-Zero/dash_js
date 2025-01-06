@@ -514,13 +514,13 @@ function drawSpikes() {
         ctx.moveTo(spike.point1x, spike.point1y);
         ctx.lineTo(spike.point2x, spike.point2y);
         ctx.lineTo(spike.point3x, spike.point3y);
-        ctx.closePath();
-        ctx.fillStyle = "ghostwhite";
+        ctx.fillStyle = "#37dafe";
         ctx.fill();
-        ctx.stroke();
+        ctx.closePath();
+        //ctx.stroke();
 
         if (toggle_Hitbox) {
-            ctx.fillStyle = "red";
+            ctx.fillStyle = "#red";
             ctx.fillRect(spike.hitbox1.x, spike.hitbox1.y, spike.hitbox1.w, spike.hitbox1.h);
             ctx.fillRect(spike.hitbox2.x, spike.hitbox2.y, spike.hitbox2.w, spike.hitbox2.h);
         }
@@ -571,7 +571,7 @@ function drawBox() {
             ctx.rotate(-b.rotation);
         }
         // Draw the box at the new rotated state
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "#e4a378";
         ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
 
         ctx.restore();
