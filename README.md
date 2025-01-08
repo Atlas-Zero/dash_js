@@ -1,5 +1,11 @@
-## TODO's
-- Musik
+## CREDITS
+- Music:
+🌳 Secret of the Forest --    • Chrono Trigger - Secret of the Forest  
+🎵 Cover by Luke Pickman --    / instrumentmaniac  
+    https://www.youtube.com/watch?v=F7C0aLqNkkA
+
+- Background:
+    https://free-game-assets.itch.io/free-city-backgrounds-pixel-art
 
 ## DONE
 - Hitbox checker | hitbox sehen(toggle)

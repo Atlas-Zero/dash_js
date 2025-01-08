@@ -72,6 +72,7 @@ function drawStartScreen() {
 
 
 function start() {
+    music.play();
     canvas.focus();
     window.addEventListener("keypress", jumpPc);
     window.addEventListener("touchstart", jumpMobile);
@@ -447,13 +448,16 @@ const floor = {
     image: new Image()
 }
 
+const music = new Audio;
+
 // sources 
-background.layer1.src = "./img/1.png";
-background.layer2.src = "./img/2.png";
-background.layer3.src = "./img/3.png";
-background.layer4.src = "./img/4.png";
-background.layer5.src = "./img/5.png";
-floor.image.src = "./img/floor.jpg";
+background.layer1.src = "./media/1.png";
+background.layer2.src = "./media/2.png";
+background.layer3.src = "./media/3.png";
+background.layer4.src = "./media/4.png";
+background.layer5.src = "./media/5.png";
+floor.image.src = "./media/floor.jpg";
+music.src = "./media/sotf.mp3";
 
 function updateBackground(speed) {
     // move all layers 
